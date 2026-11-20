@@ -21,16 +21,19 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid 
 .scene-wrap { position: absolute; inset: 0; z-index: 1; }
 .scene-wrap canvas { touch-action: none; }
 .is-selecting .scene-wrap canvas { cursor: crosshair; }
-.globe-zoom-controls { position: absolute; right: 22px; top: 50%; z-index: 3; display: flex; flex-direction: column; align-items: center; transform: translateY(-50%); border: 1px solid rgba(255,255,255,.14); background: rgba(2,4,7,.46); backdrop-filter: blur(7px); }
-.globe-zoom-controls button { width: 34px; height: 34px; padding: 0; border: 0; background: transparent; color: rgba(242,241,236,.78); font: 300 18px/1 "Space Grotesk Variable", sans-serif; cursor: pointer; }
-.globe-zoom-controls button:hover { color: var(--paper); background: rgba(255,255,255,.06); }
-.globe-zoom-controls button:active { background: rgba(255,255,255,.1); }
-.globe-zoom-controls span { width: 16px; height: 1px; background: rgba(255,255,255,.14); }
-.city-label-wrap { pointer-events: none !important; }
-.city-label { display: inline-flex; align-items: center; gap: 4px; padding: 2px 3px; color: rgba(242,241,236,.84); font-size: 9px; font-weight: 520; line-height: 1; letter-spacing: .015em; white-space: nowrap; text-shadow: 0 1px 2px #000, 0 0 5px #000; }
-.city-label i { display: block; width: 2px; height: 2px; border-radius: 50%; background: var(--warm); box-shadow: 0 0 4px rgba(233,189,114,.75); }
-.city-label-tier-2 { color: rgba(242,241,236,.72); font-size: 8px; }
-.city-label-tier-3 { color: rgba(242,241,236,.58); font-size: 7px; }
+.location-search { position: absolute; z-index: 4; top: 91px; left: 50%; width: min(360px, calc(100vw - 48px)); transform: translateX(-50%); }
+.location-search-field { display: flex; align-items: center; gap: 10px; height: 43px; padding: 0 12px; border: 1px solid rgba(242,241,236,.2); border-radius: 2px; background: rgba(2,4,7,.78); color: #969da2; box-shadow: 0 12px 34px rgba(0,0,0,.2); backdrop-filter: blur(12px); }
+.location-search-field:focus-within { border-color: rgba(233,189,114,.68); }
+.location-search-field input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--paper); font-size: .875rem; }
+.location-search-field input::placeholder { color: #747c82; }
+.location-search-clear { display: grid; flex: 0 0 auto; place-items: center; width: 27px; height: 27px; padding: 0; border: 0; background: transparent; color: #8c9499; cursor: pointer; }
+.location-results { position: absolute; inset: calc(100% + 7px) 0 auto; overflow: hidden; border: 1px solid rgba(242,241,236,.18); border-radius: 2px; background: rgba(3,6,10,.96); box-shadow: 0 24px 55px rgba(0,0,0,.42); backdrop-filter: blur(16px); }
+.location-results > button { display: grid; grid-template-columns: 19px 1fr auto; align-items: center; width: 100%; min-height: 43px; padding: 0 12px; border: 0; border-bottom: 1px solid rgba(242,241,236,.09); background: transparent; color: #d9dbd9; text-align: left; cursor: pointer; }
+.location-results > button:hover, .location-results > button:focus-visible { background: rgba(233,189,114,.09); color: var(--paper); }
+.location-results > button span { font-size: .875rem; }
+.location-results > button small { color: #747d82; font-size: .7rem; }
+.location-results > p { margin: 0; padding: 15px 13px; color: #9ba2a6; font-size: .875rem; }
+.location-search-note { display: block; padding: 9px 12px; color: #697177; font-size: .7rem; letter-spacing: .02em; }
 
 .hero-overlay { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .hero-overlay button, .hero-overlay a { pointer-events: auto; }
@@ -109,8 +112,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid 
 .webgl-fallback li button { width: 100%; padding: 11px 0; border: 0; background: none; text-align: left; cursor: pointer; }
 
 @media (max-width: 760px) {
-  .globe-zoom-controls { right: 14px; top: 46%; }
-  .globe-zoom-controls button { width: 31px; height: 31px; }
+  .location-search { top: 67px; width: calc(100vw - 40px); }
   .earth-experience { min-height: 560px; }
   .topbar { padding: 20px; }
   .wordmark { font-size: .7rem; letter-spacing: .16em; }

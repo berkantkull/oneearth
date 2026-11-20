@@ -8,10 +8,11 @@ import { formatCoordinates } from "@/lib/coordinates";
 import type { Light } from "@/types/light";
 import type { Copy, Locale } from "@/lib/i18n";
 import { cityName, nearestCity } from "@/data/cities";
+import { createPublicLight, getPublicClientId } from "@/lib/client/public-lights";
 
 type Props = {
   coordinates: { latitude: number; longitude: number } | null;
-  staticMode: boolean;
+  persistence: "api" | "supabase" | "session";
   locale: Locale;
   copy: Copy;
   onClose: () => void;
@@ -19,7 +20,7 @@ type Props = {
   onCreated: (light: Light) => void;
 };
 
-export function LeaveLightDialog({ coordinates, staticMode, locale, copy, onClose, onChangeLocation, onCreated }: Props) {
+export function LeaveLightDialog({ coordinates, persistence, locale, copy, onClose, onChangeLocation, onCreated }: Props) {
   const [word, setWord] = useState("");
   const [status, setStatus] = useState<"editing" | "submitting" | "success">("editing");
   const [error, setError] = useState("");
@@ -40,7 +41,7 @@ export function LeaveLightDialog({ coordinates, staticMode, locale, copy, onClos
     if (!valid) return;
     setStatus("submitting"); setError("");
     try {
-      if (staticMode) {
+      if (persistence === "session") {
         const light: Light = {
           id: crypto.randomUUID(),
           word: normalized,
@@ -48,6 +49,11 @@ export function LeaveLightDialog({ coordinates, staticMode, locale, copy, onClos
           longitude: selectedCoordinates.longitude,
           createdAt: new Date().toISOString(),
         };
+        setCreated(light); setStatus("success"); onCreated(light);
+        return;
+      }
+      if (persistence === "supabase") {
+        const light = await createPublicLight({ word: normalized, ...selectedCoordinates }, getPublicClientId());
         setCreated(light); setStatus("success"); onCreated(light);
         return;
       }
@@ -85,7 +91,7 @@ export function LeaveLightDialog({ coordinates, staticMode, locale, copy, onClos
               <p className="eyebrow">{copy.remembers}</p>
               <h2 id="leave-title">{copy.joinedEarth}</h2>
               <p className="success-word">{created.word}</p>
-              {staticMode && <p className="demo-notice">{copy.demoWarning}</p>}
+              {persistence === "session" && <p className="demo-notice">{copy.demoWarning}</p>}
               <button className="primary-action dialog-action" onClick={onClose}>{copy.seeLight}</button>
             </div>
           ) : (
@@ -119,7 +125,7 @@ export function LeaveLightDialog({ coordinates, staticMode, locale, copy, onClos
               <p id="word-help" className="field-help">{copy.wordRule}</p>
               {error && <p className="form-error" role="alert">{error}</p>}
               <p className="privacy-note">{copy.privacy}</p>
-              {staticMode && <p className="demo-notice">{copy.demoWarning}</p>}
+              {persistence === "session" && <p className="demo-notice">{copy.demoWarning}</p>}
               <button className="primary-action dialog-action" disabled={!valid || status === "submitting"}>
                 {status === "submitting" ? <LoaderCircle className="spin" size={17} /> : null}
                 {status === "submitting" ? copy.placing : copy.placeLight}

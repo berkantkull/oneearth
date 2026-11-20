@@ -10,10 +10,13 @@ import { HeroOverlay } from "./hero-overlay";
 import { LeaveLightDialog } from "./leave-light-dialog";
 import { LightDetails } from "./light-details";
 import { LoadingScene } from "./loading-scene";
+import { LocationSearch } from "./location-search";
+import { hasPublicLightsBackend, listPublicLights } from "@/lib/client/public-lights";
 
 const EarthScene = dynamic(() => import("./earth/earth-scene"), { ssr: false, loading: LoadingScene });
 const staticMode = process.env.NEXT_PUBLIC_STATIC_MODE === "1";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const persistence = staticMode ? (hasPublicLightsBackend() ? "supabase" : "session") : "api";
 
 function detectWebGL() {
   try {
@@ -57,7 +60,15 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
   }, []);
 
   useEffect(() => {
-    if (staticMode) return;
+    if (persistence === "session") return;
+    if (persistence === "supabase") {
+      let active = true;
+      listPublicLights().then((result) => {
+        if (!active) return;
+        setLights(result.lights); setCount(result.count); setLoadError(false);
+      }).catch(() => { if (active) setLoadError(true); });
+      return () => { active = false; };
+    }
     const controller = new AbortController();
     Promise.all([
       fetch("/api/lights?limit=200", { signal: controller.signal }).then((response) => {
@@ -133,16 +144,17 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
       <div className="scene-wrap" aria-label={locale === "tr" ? "Etkileşimli üç boyutlu Dünya" : "Interactive three-dimensional Earth"}>
         {webgl === null ? <LoadingScene /> : webgl ? (
           <ErrorBoundary fallback={fallback}>
-            <EarthScene lights={lights} selected={selected} selecting={selecting} reducedMotion={reducedMotion} locale={locale} onSelect={selectLight} onLocationPick={chooseLocation} />
+            <EarthScene lights={lights} selected={selected} selecting={selecting} reducedMotion={reducedMotion} onSelect={selectLight} onLocationPick={chooseLocation} />
           </ErrorBoundary>
         ) : fallback}
       </div>
 
       <HeroOverlay count={count} selecting={selecting} locale={locale} copy={copy} onLocaleChange={changeLocale} onLeave={beginLeaving} onCancel={() => setSelecting(false)} />
+      <LocationSearch locale={locale} copy={copy} onChoose={chooseLocation} />
       {loadError && <div className="connection-note" role="status">{copy.loadError}</div>}
       <AnimatePresence>{selected && !dialogOpen && <LightDetails key={selected.id} light={selected} locale={locale} copy={copy} onClose={clearSelection} />}</AnimatePresence>
       {dialogOpen && (
-        <LeaveLightDialog coordinates={coordinates} staticMode={staticMode} locale={locale} copy={copy} onClose={() => { setDialogOpen(false); setCoordinates(null); }} onChangeLocation={() => { setDialogOpen(false); setCoordinates(null); setSelecting(true); }} onCreated={handleCreated} />
+        <LeaveLightDialog coordinates={coordinates} persistence={persistence} locale={locale} copy={copy} onClose={() => { setDialogOpen(false); setCoordinates(null); }} onChangeLocation={() => { setDialogOpen(false); setCoordinates(null); setSelecting(true); }} onCreated={handleCreated} />
       )}
     </main>
   );

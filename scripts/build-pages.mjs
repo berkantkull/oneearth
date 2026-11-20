@@ -5,6 +5,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const backup = join(root, ".pages-build-backup");
 const routes = ["api", "light"];
+rmSync(join(root, ".next", "dev"), { recursive: true, force: true });
 rmSync(backup, { recursive: true, force: true });
 mkdirSync(backup);
 

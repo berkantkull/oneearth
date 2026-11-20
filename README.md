@@ -11,9 +11,10 @@ ONE EARTH, insanların Dünya üzerinde yaklaşık bir konum seçip tek bir keli
 - Gerçek gündüz ve gece dokularına sahip etkileşimli 3B Dünya
 - Gerçek Güneş yönüne göre gün/gece sınırı ve şehir ışıkları
 - Hareketli bulut katmanı, okyanus yansımaları ve atmosfer ışığı
-- Fare, dokunmatik hareketler ve `+ / −` kontrolleriyle daha yakına kadar inceleme
-- Yakınlaştırma düzeyine göre kademeli beliren, Türkçe ve İngilizce şehir adları
-- Seçilen yaklaşık konuma yakınsa şehir adını otomatik tanıma
+- Akıcı fare ve dokunmatik kontrolleri; görüntü netliğini koruyan kontrollü yakınlaştırma
+- 81 il ve başlıca dünya şehirleri için Türkçe/İngilizce konum araması
+- Arama sonucundan veya doğrudan Dünya üzerinden yaklaşık konum seçimi
+- GPU üzerinde tek çağrıda çizilen, sıcak çekirdekli ve yumuşak haleli ışık işaretleri
 - Türkçe ve İngilizce arayüz; dil tercihi tarayıcıda hatırlanır
 - GPS izni istemeden, Dünya üzerinden yaklaşık konum seçimi
 - 1–24 Unicode karakterden oluşan tek kelime doğrulaması
@@ -25,7 +26,9 @@ ONE EARTH, insanların Dünya üzerinde yaklaşık bir konum seçip tek bir keli
 
 Uygulama örnek veya uydurma kullanıcı aktivitesi göstermez. Veritabanı bağlı değilse sayaç **0 ışık** olarak başlar.
 
-GitHub Pages yalnızca statik dosya barındırdığı için bu sürümde bırakılan yeni ışıklar geçerli tarayıcı oturumunda görünür, ancak kalıcı olarak kaydedilmez. Kalıcı ve herkese açık ışıklar için uygulamanın Supabase ve sunucu API’leriyle Vercel benzeri bir platformda çalıştırılması gerekir.
+GitHub Pages kendi başına veritabanı çalıştırmaz. Bu proje, statik Pages arayüzünü Supabase Data API’ye bağlayarak ışıkları kalıcı tutabilir. Tarayıcı yalnızca düşük yetkili **publishable key** kullanır; okuma, doğrulama, ekleme ve temel hız sınırı veritabanındaki RLS/RPC kurallarıyla uygulanır.
+
+Supabase bağlantı değerleri tanımlı değilse uygulama güvenli biçimde oturum moduna döner ve ışığın kalıcı olmadığını formda açıkça belirtir.
 
 ## Yerel geliştirme
 
@@ -44,6 +47,8 @@ Tarayıcıdan `http://localhost:3000` adresini açın.
 | Değişken | Açıklama |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Paylaşım kartlarında kullanılacak ana site adresi |
+| `NEXT_PUBLIC_SUPABASE_URL` | GitHub Pages istemcisinin bağlanacağı Supabase proje adresi |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Tarayıcı için düşük yetkili Supabase publishable key |
 | `SUPABASE_URL` | Sunucu tarafında kullanılan Supabase proje adresi |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yalnızca sunucuda tutulan Supabase servis anahtarı |
 | `UPSTASH_REDIS_REST_URL` | Üretim oran sınırlaması için Upstash adresi |
@@ -56,11 +61,14 @@ Servis rolü anahtarı hiçbir zaman `NEXT_PUBLIC_` önekiyle tanımlanmamalıd�
 ## Supabase kurulumu
 
 1. Bir Supabase projesi oluşturun.
-2. `supabase/migrations/20261120000000_create_lights.sql` dosyasını çalıştırın.
-3. Proje adresi ve servis rolü anahtarını dağıtım ortamına ekleyin.
-4. Tarayıcıdan doğrudan tablo yazma izni vermeyin; bütün yazma işlemleri API üzerinden geçer.
+2. `supabase/migrations` klasöründeki iki migration dosyasını tarih sırasıyla çalıştırın.
+3. GitHub reposunda `NEXT_PUBLIC_SUPABASE_URL` adlı Actions değişkenini oluşturun.
+4. GitHub reposunda `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` adlı Actions secret’ını oluşturun.
+5. Pages iş akışını yeniden çalıştırın. Sayaç ve ışıklar artık Supabase’den okunur; yeni ışıklar kalıcı kaydedilir.
 
-Bir ışığı yayından kaldırmak için Supabase tablosundaki `status` alanını `hidden` yapın. Genel API yalnızca `visible` kayıtları döndürür.
+Publishable key tarayıcıda kullanılmak üzere tasarlanmıştır ve yetkisi RLS ile sınırlıdır. `SUPABASE_SERVICE_ROLE_KEY` veya yeni `sb_secret_...` anahtarları hiçbir zaman GitHub Pages derlemesine eklenmemelidir.
+
+Bir ışığı yayından kaldırmak için Supabase tablosundaki `status` alanını `hidden` yapın. Pages istemcisi ve genel API yalnızca `visible` kayıtları döndürür.
 
 ## Kontroller
 

@@ -93,16 +93,16 @@ export function EarthGlobe({ selecting, onLocationPick }: Props) {
   return (
     <group>
       <mesh onPointerDown={handlePointerDown} onPointerUp={handlePointerUp} material={earthMaterial}>
-        <sphereGeometry args={[EARTH_RADIUS, 160, 80]} />
+        <sphereGeometry args={[EARTH_RADIUS, 96, 48]} />
       </mesh>
       <mesh material={cloudMaterial}>
-        <sphereGeometry args={[EARTH_RADIUS * 1.006, 128, 64]} />
+        <sphereGeometry args={[EARTH_RADIUS * 1.006, 72, 36]} />
       </mesh>
       <mesh material={atmosphereMaterial}>
-        <sphereGeometry args={[ATMOSPHERE_RADIUS, 96, 48]} />
+        <sphereGeometry args={[ATMOSPHERE_RADIUS, 64, 32]} />
       </mesh>
       <mesh scale={48}>
-        <sphereGeometry args={[1, 64, 32]} />
+        <sphereGeometry args={[1, 32, 16]} />
         <meshBasicMaterial map={stars} side={THREE.BackSide} color="#4a5363" depthWrite={false} />
       </mesh>
     </group>

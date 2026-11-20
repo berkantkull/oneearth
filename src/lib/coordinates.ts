@@ -22,8 +22,9 @@ export function vector3ToLatLon({ x, y, z }: Vector3Like) {
   };
 }
 
-export function formatCoordinates(latitude: number, longitude: number) {
-  const lat = `${Math.abs(latitude).toFixed(1)}°${latitude >= 0 ? "N" : "S"}`;
-  const lon = `${Math.abs(longitude).toFixed(1)}°${longitude >= 0 ? "E" : "W"}`;
+export function formatCoordinates(latitude: number, longitude: number, locale: "tr" | "en" = "en") {
+  const directions = locale === "tr" ? { north: "K", south: "G", east: "D", west: "B" } : { north: "N", south: "S", east: "E", west: "W" };
+  const lat = `${Math.abs(latitude).toFixed(1)}°${latitude >= 0 ? directions.north : directions.south}`;
+  const lon = `${Math.abs(longitude).toFixed(1)}°${longitude >= 0 ? directions.east : directions.west}`;
   return `${lat} · ${lon}`;
 }

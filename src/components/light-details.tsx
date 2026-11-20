@@ -4,9 +4,10 @@ import { X } from "lucide-react";
 import { motion } from "motion/react";
 import { formatCoordinates } from "@/lib/coordinates";
 import type { Light } from "@/types/light";
+import type { Copy, Locale } from "@/lib/i18n";
 import { ShareLight } from "./share-light";
 
-export function LightDetails({ light, onClose }: { light: Light; onClose: () => void }) {
+export function LightDetails({ light, locale, copy, onClose }: { light: Light; locale: Locale; copy: Copy; onClose: () => void }) {
   return (
     <motion.aside
       className="light-details glass-panel"
@@ -15,14 +16,14 @@ export function LightDetails({ light, onClose }: { light: Light; onClose: () => 
       exit={{ opacity: 0, y: 10 }}
       aria-live="polite"
     >
-      <button className="icon-button close-detail" onClick={onClose} aria-label="Close light details"><X size={17} /></button>
-      <p className="eyebrow">A light from Earth</p>
+      <button className="icon-button close-detail" onClick={onClose} aria-label={copy.closeDetails}><X size={17} /></button>
+      <p className="eyebrow">{copy.earthLight}</p>
       <p className="light-word">{light.word}</p>
       <div className="detail-meta">
-        <span>{formatCoordinates(light.latitude, light.longitude)}</span>
-        <span>{new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(light.createdAt))}</span>
+        <span>{formatCoordinates(light.latitude, light.longitude, locale)}</span>
+        <span>{new Intl.DateTimeFormat(locale === "tr" ? "tr-TR" : "en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(light.createdAt))}</span>
       </div>
-      <ShareLight id={light.id} />
+      <ShareLight id={light.id} copy={copy} />
     </motion.aside>
   );
 }

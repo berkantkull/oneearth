@@ -1,24 +1,27 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/space-grotesk";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://berkantkull.github.io/oneearth"),
   title: { default: "ONE EARTH", template: "%s · ONE EARTH" },
-  description: "One planet. Millions of voices. Leave one word as a light on Earth.",
+  description: "Tek dünya. Milyonlarca ses. Dünya üzerinde bir kelimelik ışığını bırak.",
+  authors: [{ name: "Berkant Kul" }],
+  creator: "Berkant Kul",
   openGraph: {
     title: "ONE EARTH",
-    description: "You were here. And the Earth remembers.",
+    description: "Buradaydın. Dünya bunu hatırlıyor.",
     type: "website",
     images: ["/opengraph-image"],
   },
   twitter: { card: "summary_large_image" },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="tr">
       <body>{children}</body>
     </html>
   );

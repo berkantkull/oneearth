@@ -1,4 +1,3 @@
-import { demoLights } from "@/data/demo-lights";
 import { getSupabaseAdmin, hasSupabaseConfig } from "@/lib/server/supabase";
 import type { CreateLightInput, Light, LightsPage } from "@/types/light";
 
@@ -28,7 +27,7 @@ function decodeCursor(cursor: string) {
 
 export async function listLights(limit: number, cursor?: string): Promise<LightsPage> {
   if (!hasSupabaseConfig()) {
-    return { lights: demoLights.slice(0, limit), nextCursor: null, demo: true };
+    return { lights: [], nextCursor: null, demo: true };
   }
 
   const admin = getSupabaseAdmin();
@@ -59,7 +58,7 @@ export async function listLights(limit: number, cursor?: string): Promise<Lights
 }
 
 export async function getLight(id: string): Promise<Light | null> {
-  if (!hasSupabaseConfig()) return demoLights.find((light) => light.id === id) ?? null;
+  if (!hasSupabaseConfig()) return null;
 
   const { data, error } = await getSupabaseAdmin()
     .from("lights")
@@ -89,7 +88,7 @@ export async function createLight(input: CreateLightInput): Promise<{ light: Lig
 }
 
 export async function countLights() {
-  if (!hasSupabaseConfig()) return { count: demoLights.length, demo: true };
+  if (!hasSupabaseConfig()) return { count: 0, demo: true };
   const { count, error } = await getSupabaseAdmin()
     .from("lights")
     .select("id", { count: "exact", head: true })

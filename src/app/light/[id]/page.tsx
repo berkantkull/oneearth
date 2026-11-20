@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const light = await getLight(id);
     if (!light) return { title: "Light not found · ONE EARTH" };
     const title = `“${light.word}” · ONE EARTH`;
-    const description = "One word, left as a light on our shared planet.";
+    const description = "Ortak gezegenimize ışık olarak bırakılmış tek bir kelime.";
     return { title, description, openGraph: { title, description, type: "website", images: ["/opengraph-image"] } };
   } catch { return { title: "ONE EARTH" }; }
 }

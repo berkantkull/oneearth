@@ -1,11 +1,12 @@
-type Props = { count: number; demo: boolean };
+import type { Copy, Locale } from "@/lib/i18n";
 
-export function StatsCounter({ count, demo }: Props) {
+type Props = { count: number; locale: Locale; copy: Copy };
+
+export function StatsCounter({ count, locale, copy }: Props) {
   return (
     <div className="stats-counter" aria-label={`${count} lights on Earth`}>
       <span className="live-dot" aria-hidden="true" />
-      <span>{count.toLocaleString("en-US")} {count === 1 ? "light" : "lights"}</span>
-      {demo && <span className="demo-pill">Demo</span>}
+      <span>{count.toLocaleString(locale === "tr" ? "tr-TR" : "en-US")} {count === 1 ? copy.light : copy.lights}</span>
     </div>
   );
 }

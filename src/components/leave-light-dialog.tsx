@@ -6,16 +6,19 @@ import { AnimatePresence, motion } from "motion/react";
 import { codePointLength, normalizeWord } from "@/lib/validation";
 import { formatCoordinates } from "@/lib/coordinates";
 import type { Light } from "@/types/light";
+import type { Copy, Locale } from "@/lib/i18n";
 
 type Props = {
   coordinates: { latitude: number; longitude: number } | null;
-  demo: boolean;
+  staticMode: boolean;
+  locale: Locale;
+  copy: Copy;
   onClose: () => void;
   onChangeLocation: () => void;
   onCreated: (light: Light) => void;
 };
 
-export function LeaveLightDialog({ coordinates, demo, onClose, onChangeLocation, onCreated }: Props) {
+export function LeaveLightDialog({ coordinates, staticMode, locale, copy, onClose, onChangeLocation, onCreated }: Props) {
   const [word, setWord] = useState("");
   const [status, setStatus] = useState<"editing" | "submitting" | "success">("editing");
   const [error, setError] = useState("");
@@ -24,6 +27,7 @@ export function LeaveLightDialog({ coordinates, demo, onClose, onChangeLocation,
 
   useEffect(() => { inputRef.current?.focus(); }, []);
   if (!coordinates) return null;
+  const selectedCoordinates = coordinates;
 
   const normalized = normalizeWord(word);
   const length = codePointLength(normalized);
@@ -34,16 +38,27 @@ export function LeaveLightDialog({ coordinates, demo, onClose, onChangeLocation,
     if (!valid) return;
     setStatus("submitting"); setError("");
     try {
+      if (staticMode) {
+        const light: Light = {
+          id: crypto.randomUUID(),
+          word: normalized,
+          latitude: selectedCoordinates.latitude,
+          longitude: selectedCoordinates.longitude,
+          createdAt: new Date().toISOString(),
+        };
+        setCreated(light); setStatus("success"); onCreated(light);
+        return;
+      }
       const response = await fetch("/api/lights", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ word: normalized, ...coordinates }),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Your light could not be placed.");
+      if (!response.ok) throw new Error(result.error || copy.submitError);
       setCreated(result.light); setStatus("success"); onCreated(result.light);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Your light could not be placed.");
+      setError(reason instanceof Error ? reason.message : copy.submitError);
       setStatus("editing");
     }
   }
@@ -61,45 +76,45 @@ export function LeaveLightDialog({ coordinates, demo, onClose, onChangeLocation,
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 15 }}
         >
-          <button className="icon-button dialog-close" onClick={onClose} aria-label="Close"><X size={18} /></button>
+          <button className="icon-button dialog-close" onClick={onClose} aria-label={copy.dialogClose}><X size={18} /></button>
           {status === "success" && created ? (
             <div className="success-state">
               <span className="success-icon"><Check size={25} /></span>
-              <p className="eyebrow">The Earth remembers</p>
-              <h2 id="leave-title">Your light is now<br />part of Earth.</h2>
+              <p className="eyebrow">{copy.remembers}</p>
+              <h2 id="leave-title">{copy.joinedEarth}</h2>
               <p className="success-word">{created.word}</p>
-              {demo && <p className="demo-notice">Demo mode: this light lives in your current view only and is not saved.</p>}
-              <button className="primary-action dialog-action" onClick={onClose}>See your light</button>
+              {staticMode && <p className="demo-notice">{copy.demoWarning}</p>}
+              <button className="primary-action dialog-action" onClick={onClose}>{copy.seeLight}</button>
             </div>
           ) : (
             <form onSubmit={submit}>
-              <p className="eyebrow">Leave your light</p>
-              <h2 id="leave-title">What is your one word?</h2>
-              <p className="dialog-copy">A feeling, a hope, a memory. One word that says you were here.</p>
+              <p className="eyebrow">{copy.leaveLight}</p>
+              <h2 id="leave-title">{copy.oneWordQuestion}</h2>
+              <p className="dialog-copy">{copy.wordPrompt}</p>
               <div className="location-row">
-                <span><MapPin size={15} />{formatCoordinates(coordinates.latitude, coordinates.longitude)}</span>
-                <button type="button" onClick={onChangeLocation}>Change</button>
+                <span><MapPin size={15} />{formatCoordinates(coordinates.latitude, coordinates.longitude, locale)}</span>
+                <button type="button" onClick={onChangeLocation}>{copy.change}</button>
               </div>
               <label className="word-field">
-                <span className="sr-only">Your one word</span>
+                <span className="sr-only">{copy.oneWordQuestion}</span>
                 <input
                   ref={inputRef}
                   value={word}
                   onChange={(event) => setWord(event.target.value)}
                   maxLength={48}
-                  placeholder="Your word"
+                  placeholder={copy.wordPlaceholder}
                   autoComplete="off"
                   aria-describedby="word-help"
                 />
                 <span className={length > 24 ? "over-limit" : ""}>{length}/24</span>
               </label>
-              <p id="word-help" className="field-help">One word · No spaces · Any language</p>
+              <p id="word-help" className="field-help">{copy.wordRule}</p>
               {error && <p className="form-error" role="alert">{error}</p>}
-              <p className="privacy-note">Your selected place and word will be public. We never request your precise GPS location.</p>
-              {demo && <p className="demo-notice">Demo mode is active. New lights are not persisted.</p>}
+              <p className="privacy-note">{copy.privacy}</p>
+              {staticMode && <p className="demo-notice">{copy.demoWarning}</p>}
               <button className="primary-action dialog-action" disabled={!valid || status === "submitting"}>
                 {status === "submitting" ? <LoaderCircle className="spin" size={17} /> : null}
-                {status === "submitting" ? "Placing your light" : "Place my light"}
+                {status === "submitting" ? copy.placing : copy.placeLight}
               </button>
             </form>
           )}

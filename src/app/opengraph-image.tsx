@@ -1,8 +1,9 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "ONE EARTH — One planet. Millions of voices.";
+export const alt = "ONE EARTH — Tek dünya. Milyonlarca ses.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+export const dynamic = "force-static";
 
 export default function OpenGraphImage() {
   return new ImageResponse(
@@ -12,10 +13,11 @@ export default function OpenGraphImage() {
       <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
         <div style={{ fontSize: 25, letterSpacing: 8 }}>ONE EARTH</div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 18, letterSpacing: 4, color: "#f3c47a", textTransform: "uppercase" }}>One planet. Millions of voices.</div>
+          <div style={{ fontSize: 18, letterSpacing: 4, color: "#f3c47a", textTransform: "uppercase" }}>Tek dünya. Milyonlarca ses.</div>
           <div style={{ display: "flex", flexDirection: "column", fontSize: 64, lineHeight: 1.05, marginTop: 22, maxWidth: 640 }}>
-            <span>You were here.</span><span>And the Earth remembers.</span>
+            <span>Buradaydın.</span><span>Dünya bunu hatırlıyor.</span>
           </div>
+          <div style={{ marginTop: 30, fontSize: 15, color: "#88919a" }}>© 2026 Berkant Kul</div>
         </div>
       </div>
     </div>,

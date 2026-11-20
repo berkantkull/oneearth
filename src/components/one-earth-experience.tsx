@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence } from "motion/react";
 import type { Light, LightsPage } from "@/types/light";
+import { messages, type Locale } from "@/lib/i18n";
 import { ErrorBoundary } from "./error-boundary";
 import { HeroOverlay } from "./hero-overlay";
 import { LeaveLightDialog } from "./leave-light-dialog";
@@ -11,6 +12,8 @@ import { LightDetails } from "./light-details";
 import { LoadingScene } from "./loading-scene";
 
 const EarthScene = dynamic(() => import("./earth/earth-scene"), { ssr: false, loading: LoadingScene });
+const staticMode = process.env.NEXT_PUBLIC_STATIC_MODE === "1";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 function detectWebGL() {
   try {
@@ -22,7 +25,7 @@ function detectWebGL() {
 export function OneEarthExperience({ initialLight = null }: { initialLight?: Light | null }) {
   const [lights, setLights] = useState<Light[]>(initialLight ? [initialLight] : []);
   const [count, setCount] = useState(initialLight ? 1 : 0);
-  const [demo, setDemo] = useState(false);
+  const [locale, setLocale] = useState<Locale>("tr");
   const [selected, setSelected] = useState<Light | null>(initialLight);
   const [selecting, setSelecting] = useState(false);
   const [coordinates, setCoordinates] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -46,6 +49,15 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
   }, []);
 
   useEffect(() => {
+    const restoreLocale = window.setTimeout(() => {
+      const saved = window.localStorage.getItem("one-earth-locale");
+      if (saved === "tr" || saved === "en") setLocale(saved);
+    }, 0);
+    return () => window.clearTimeout(restoreLocale);
+  }, []);
+
+  useEffect(() => {
+    if (staticMode) return;
     const controller = new AbortController();
     Promise.all([
       fetch("/api/lights?limit=200", { signal: controller.signal }).then((response) => {
@@ -62,23 +74,32 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
         current.forEach((light) => merged.set(light.id, light));
         return Array.from(merged.values());
       });
-      setCount(stats.count); setDemo(page.demo || stats.demo); setLoadError(false);
+      setCount(stats.count); setLoadError(false);
     }).catch((error) => {
       if (error.name !== "AbortError") setLoadError(true);
     });
     return () => controller.abort();
   }, []);
 
+  const copy = messages[locale];
+
+  function changeLocale(next: Locale) {
+    setLocale(next);
+    window.localStorage.setItem("one-earth-locale", next);
+    document.documentElement.lang = next;
+  }
+
   const recentLights = useMemo(() => lights.slice(0, 12), [lights]);
 
   function selectLight(light: Light) {
     setSelected(light); setSelecting(false);
-    window.history.replaceState({}, "", `/light/${light.id}`);
+    const path = staticMode ? `${basePath}/?light=${light.id}` : `/light/${light.id}`;
+    window.history.replaceState({}, "", path);
   }
 
   function clearSelection() {
     setSelected(null);
-    window.history.replaceState({}, "", "/");
+    window.history.replaceState({}, "", staticMode ? `${basePath}/` : "/");
   }
 
   function beginLeaving() {
@@ -98,9 +119,9 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
   const fallback = (
     <div className="webgl-fallback">
       <div>
-        <p className="eyebrow">The Earth is still here</p>
-        <h2>Your browser could not open the 3D globe.</h2>
-        <p>You can still visit the most recent lights below.</p>
+        <p className="eyebrow">{copy.fallbackEyebrow}</p>
+        <h2>{copy.fallbackTitle}</h2>
+        <p>{copy.fallbackCopy}</p>
       </div>
       <ul>{recentLights.map((light) => <li key={light.id}><button onClick={() => selectLight(light)}>{light.word}</button></li>)}</ul>
     </div>
@@ -109,7 +130,7 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
   return (
     <main className={`earth-experience ${selecting ? "is-selecting" : ""}`}>
       <div className="ambient-glow" aria-hidden="true" />
-      <div className="scene-wrap" aria-label="Interactive three-dimensional Earth">
+      <div className="scene-wrap" aria-label={locale === "tr" ? "Etkileşimli üç boyutlu Dünya" : "Interactive three-dimensional Earth"}>
         {webgl === null ? <LoadingScene /> : webgl ? (
           <ErrorBoundary fallback={fallback}>
             <EarthScene lights={lights} selected={selected} selecting={selecting} reducedMotion={reducedMotion} onSelect={selectLight} onLocationPick={chooseLocation} />
@@ -117,11 +138,11 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
         ) : fallback}
       </div>
 
-      <HeroOverlay count={count} demo={demo} selecting={selecting} onLeave={beginLeaving} onCancel={() => setSelecting(false)} />
-      {loadError && <div className="connection-note" role="status">The latest lights could not be reached. Showing what we have.</div>}
-      <AnimatePresence>{selected && !dialogOpen && <LightDetails key={selected.id} light={selected} onClose={clearSelection} />}</AnimatePresence>
+      <HeroOverlay count={count} selecting={selecting} locale={locale} copy={copy} onLocaleChange={changeLocale} onLeave={beginLeaving} onCancel={() => setSelecting(false)} />
+      {loadError && <div className="connection-note" role="status">{copy.loadError}</div>}
+      <AnimatePresence>{selected && !dialogOpen && <LightDetails key={selected.id} light={selected} locale={locale} copy={copy} onClose={clearSelection} />}</AnimatePresence>
       {dialogOpen && (
-        <LeaveLightDialog coordinates={coordinates} demo={demo} onClose={() => { setDialogOpen(false); setCoordinates(null); }} onChangeLocation={() => { setDialogOpen(false); setCoordinates(null); setSelecting(true); }} onCreated={handleCreated} />
+        <LeaveLightDialog coordinates={coordinates} staticMode={staticMode} locale={locale} copy={copy} onClose={() => { setDialogOpen(false); setCoordinates(null); }} onChangeLocation={() => { setDialogOpen(false); setCoordinates(null); setSelecting(true); }} onCreated={handleCreated} />
       )}
     </main>
   );

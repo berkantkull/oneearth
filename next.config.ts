@@ -1,8 +1,13 @@
 import type { NextConfig } from "next";
 
+const isPagesBuild = process.env.PAGES_BUILD === "1";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const nextConfig: NextConfig = {
-  async headers() {
-    return [
+  ...(isPagesBuild ? { output: "export" as const, basePath, assetPrefix: basePath, trailingSlash: true } : {}),
+  images: { unoptimized: isPagesBuild },
+  ...(!isPagesBuild ? {
+    headers: async () => [
       {
         source: "/:path*",
         headers: [
@@ -12,8 +17,8 @@ const nextConfig: NextConfig = {
           { key: "X-Frame-Options", value: "DENY" },
         ],
       },
-    ];
-  },
+    ],
+  } : {}),
 };
 
 export default nextConfig;

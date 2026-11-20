@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Stars } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { latLonToVector3 } from "@/lib/coordinates";
@@ -46,14 +46,17 @@ export default function EarthScene(props: Props) {
       dpr={[1, 1.75]}
       camera={{ position: [0, 0.25, 5.1], fov: 42, near: 0.1, far: 100 }}
       gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
-      onCreated={({ gl }) => gl.setClearColor(0x05070b, 0)}
+      onCreated={({ gl }) => {
+        gl.setClearColor(0x020306, 1);
+        gl.outputColorSpace = THREE.SRGBColorSpace;
+        gl.toneMapping = THREE.ACESFilmicToneMapping;
+        gl.toneMappingExposure = 1.05;
+      }}
     >
-      <ambientLight intensity={0.4} color="#7aa7c7" />
-      <directionalLight position={[4, 2.5, 5]} intensity={2.2} color="#d6ecff" />
-      <directionalLight position={[-3, -1, -4]} intensity={0.35} color="#356a9c" />
-      <Stars radius={38} depth={30} count={props.reducedMotion ? 600 : 1300} factor={1.6} saturation={0.15} fade speed={0.18} />
-      <EarthGlobe selecting={props.selecting} onLocationPick={props.onLocationPick} />
-      <LightMarkers lights={props.lights} selectedId={props.selected?.id ?? null} onSelect={props.onSelect} />
+      <Suspense fallback={null}>
+        <EarthGlobe selecting={props.selecting} onLocationPick={props.onLocationPick} />
+        <LightMarkers lights={props.lights} selectedId={props.selected?.id ?? null} onSelect={props.onSelect} />
+      </Suspense>
       <CameraFocus selected={props.selected} />
       <OrbitControls
         ref={controls}

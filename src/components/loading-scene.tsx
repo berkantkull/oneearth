@@ -1,8 +1,8 @@
 export function LoadingScene() {
   return (
-    <div className="scene-loading" role="status" aria-label="Loading Earth">
+    <div className="scene-loading" role="status" aria-label="Dünya yükleniyor">
       <span className="loading-orbit" />
-      <span>Gathering the lights</span>
+      <span>ONE EARTH</span>
     </div>
   );
 }

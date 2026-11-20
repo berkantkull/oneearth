@@ -7,6 +7,7 @@ import { codePointLength, normalizeWord } from "@/lib/validation";
 import { formatCoordinates } from "@/lib/coordinates";
 import type { Light } from "@/types/light";
 import type { Copy, Locale } from "@/lib/i18n";
+import { cityName, nearestCity } from "@/data/cities";
 
 type Props = {
   coordinates: { latitude: number; longitude: number } | null;
@@ -28,6 +29,7 @@ export function LeaveLightDialog({ coordinates, staticMode, locale, copy, onClos
   useEffect(() => { inputRef.current?.focus(); }, []);
   if (!coordinates) return null;
   const selectedCoordinates = coordinates;
+  const selectedCity = nearestCity(coordinates.latitude, coordinates.longitude);
 
   const normalized = normalizeWord(word);
   const length = codePointLength(normalized);
@@ -92,7 +94,13 @@ export function LeaveLightDialog({ coordinates, staticMode, locale, copy, onClos
               <h2 id="leave-title">{copy.oneWordQuestion}</h2>
               <p className="dialog-copy">{copy.wordPrompt}</p>
               <div className="location-row">
-                <span><MapPin size={15} />{formatCoordinates(coordinates.latitude, coordinates.longitude, locale)}</span>
+                <span>
+                  <MapPin size={15} />
+                  <span className="location-copy">
+                    {selectedCity && <strong>{cityName(selectedCity, locale)}</strong>}
+                    <small>{formatCoordinates(coordinates.latitude, coordinates.longitude, locale)}</small>
+                  </span>
+                </span>
                 <button type="button" onClick={onChangeLocation}>{copy.change}</button>
               </div>
               <label className="word-field">

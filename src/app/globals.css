@@ -21,10 +21,20 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid 
 .scene-wrap { position: absolute; inset: 0; z-index: 1; }
 .scene-wrap canvas { touch-action: none; }
 .is-selecting .scene-wrap canvas { cursor: crosshair; }
+.globe-zoom-controls { position: absolute; right: 22px; top: 50%; z-index: 3; display: flex; flex-direction: column; align-items: center; transform: translateY(-50%); border: 1px solid rgba(255,255,255,.14); background: rgba(2,4,7,.46); backdrop-filter: blur(7px); }
+.globe-zoom-controls button { width: 34px; height: 34px; padding: 0; border: 0; background: transparent; color: rgba(242,241,236,.78); font: 300 18px/1 "Space Grotesk Variable", sans-serif; cursor: pointer; }
+.globe-zoom-controls button:hover { color: var(--paper); background: rgba(255,255,255,.06); }
+.globe-zoom-controls button:active { background: rgba(255,255,255,.1); }
+.globe-zoom-controls span { width: 16px; height: 1px; background: rgba(255,255,255,.14); }
+.city-label-wrap { pointer-events: none !important; }
+.city-label { display: inline-flex; align-items: center; gap: 4px; padding: 2px 3px; color: rgba(242,241,236,.84); font-size: 9px; font-weight: 520; line-height: 1; letter-spacing: .015em; white-space: nowrap; text-shadow: 0 1px 2px #000, 0 0 5px #000; }
+.city-label i { display: block; width: 2px; height: 2px; border-radius: 50%; background: var(--warm); box-shadow: 0 0 4px rgba(233,189,114,.75); }
+.city-label-tier-2 { color: rgba(242,241,236,.72); font-size: 8px; }
+.city-label-tier-3 { color: rgba(242,241,236,.58); font-size: 7px; }
 
 .hero-overlay { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .hero-overlay button, .hero-overlay a { pointer-events: auto; }
-.topbar { position: absolute; inset: 0 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 30px clamp(24px, 4vw, 60px); }
+.topbar { position: absolute; inset: 0 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 30px clamp(24px, 4vw, 60px); background: linear-gradient(180deg, rgba(2,4,7,.72), rgba(2,4,7,0)); }
 .wordmark { display: inline-flex; align-items: center; gap: 13px; color: var(--paper); text-decoration: none; font-family: "Space Grotesk Variable", sans-serif; font-size: .82rem; font-weight: 600; letter-spacing: .22em; }
 .planet-mark { position: relative; width: 23px; height: 23px; border: 1px solid rgba(242,241,236,.55); border-radius: 50%; }
 .planet-mark::after { content: ""; position: absolute; inset: 3px -4px; border-top: 1px solid var(--warm); border-radius: 50%; transform: rotate(-24deg); }
@@ -66,6 +76,9 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid 
 .dialog-copy { margin: 15px 0 23px; max-width: 360px; color: #969da2; font-size: .86rem; line-height: 1.6; }
 .location-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); color: #adb2b4; font-size: .73rem; }
 .location-row span { display: flex; align-items: center; gap: 8px; }
+.location-row .location-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.location-copy strong { color: var(--paper); font-size: .75rem; font-weight: 560; }
+.location-copy small { color: #858d92; font-size: .65rem; }
 .location-row button { padding: 0; border: 0; background: none; color: var(--warm); cursor: pointer; font-size: .7rem; }
 .word-field { position: relative; display: block; }
 .word-field input { width: 100%; padding: 16px 50px 16px 0; border: 0; border-bottom: 1px solid rgba(242,241,236,.3); background: transparent; color: var(--paper); font-family: "Space Grotesk Variable", sans-serif; font-size: clamp(1.6rem,5vw,2.25rem); letter-spacing: -.025em; }
@@ -96,6 +109,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid 
 .webgl-fallback li button { width: 100%; padding: 11px 0; border: 0; background: none; text-align: left; cursor: pointer; }
 
 @media (max-width: 760px) {
+  .globe-zoom-controls { right: 14px; top: 46%; }
+  .globe-zoom-controls button { width: 31px; height: 31px; }
   .earth-experience { min-height: 560px; }
   .topbar { padding: 20px; }
   .wordmark { font-size: .7rem; letter-spacing: .16em; }

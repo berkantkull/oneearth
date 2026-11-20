@@ -133,7 +133,7 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
       <div className="scene-wrap" aria-label={locale === "tr" ? "Etkileşimli üç boyutlu Dünya" : "Interactive three-dimensional Earth"}>
         {webgl === null ? <LoadingScene /> : webgl ? (
           <ErrorBoundary fallback={fallback}>
-            <EarthScene lights={lights} selected={selected} selecting={selecting} reducedMotion={reducedMotion} onSelect={selectLight} onLocationPick={chooseLocation} />
+            <EarthScene lights={lights} selected={selected} selecting={selecting} reducedMotion={reducedMotion} locale={locale} onSelect={selectLight} onLocationPick={chooseLocation} />
           </ErrorBoundary>
         ) : fallback}
       </div>

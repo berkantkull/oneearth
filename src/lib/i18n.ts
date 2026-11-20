@@ -13,7 +13,7 @@ export type Copy = {
 export const messages: Record<Locale, Copy> = {
   tr: {
     home: "ONE EARTH ana sayfa", lights: "ışık", light: "ışık", demo: "Deneme", tagline: "Tek dünya. Milyonlarca ses.",
-    titleLead: "Buradaydın.", titleTail: "Dünya bunu hatırlıyor.", explore: "Çevirmek için sürükle · Bir ışığa dokun",
+    titleLead: "Buradaydın.", titleTail: "Dünya bunu hatırlıyor.", explore: "Sürükle · Yakınlaştır · Bir ışığa dokun",
     choosePlace: "Yaklaşık konumunu seçmek için dünyaya dokun", cancel: "Vazgeç", leaveLight: "Işığını bırak",
     empty: "Henüz hiç ışık yok. İlki senin olabilir.", copyright: "© 2026 Berkant Kul. Tüm hakları saklıdır.",
     earthLight: "Dünya’dan bir ışık", closeDetails: "Işık ayrıntılarını kapat", copyLink: "Bağlantıyı kopyala",
@@ -28,7 +28,7 @@ export const messages: Record<Locale, Copy> = {
   },
   en: {
     home: "ONE EARTH home", lights: "lights", light: "light", demo: "Demo", tagline: "One planet. Millions of voices.",
-    titleLead: "You were here.", titleTail: "And the Earth remembers.", explore: "Drag to explore · Tap a light",
+    titleLead: "You were here.", titleTail: "And the Earth remembers.", explore: "Drag · Zoom · Tap a light",
     choosePlace: "Tap the Earth to choose an approximate place", cancel: "Cancel", leaveLight: "Leave your light",
     empty: "There are no lights yet. Yours can be the first.", copyright: "© 2026 Berkant Kul. All rights reserved.",
     earthLight: "A light from Earth", closeDetails: "Close light details", copyLink: "Copy link", copied: "Link copied",

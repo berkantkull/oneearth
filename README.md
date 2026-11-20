@@ -11,7 +11,9 @@ ONE EARTH, insanların Dünya üzerinde yaklaşık bir konum seçip tek bir keli
 - Gerçek gündüz ve gece dokularına sahip etkileşimli 3B Dünya
 - Gerçek Güneş yönüne göre gün/gece sınırı ve şehir ışıkları
 - Hareketli bulut katmanı, okyanus yansımaları ve atmosfer ışığı
-- Fare ve dokunmatik ekranla döndürme, yakınlaştırma ve ışık seçme
+- Fare, dokunmatik hareketler ve `+ / −` kontrolleriyle daha yakına kadar inceleme
+- Yakınlaştırma düzeyine göre kademeli beliren, Türkçe ve İngilizce şehir adları
+- Seçilen yaklaşık konuma yakınsa şehir adını otomatik tanıma
 - Türkçe ve İngilizce arayüz; dil tercihi tarayıcıda hatırlanır
 - GPS izni istemeden, Dünya üzerinden yaklaşık konum seçimi
 - 1–24 Unicode karakterden oluşan tek kelime doğrulaması

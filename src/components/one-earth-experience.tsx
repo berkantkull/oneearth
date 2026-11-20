@@ -150,7 +150,7 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
       </div>
 
       <HeroOverlay count={count} selecting={selecting} locale={locale} copy={copy} onLocaleChange={changeLocale} onLeave={beginLeaving} onCancel={() => setSelecting(false)} />
-      <LocationSearch locale={locale} copy={copy} onChoose={chooseLocation} />
+      {!selected && !dialogOpen && <LocationSearch locale={locale} copy={copy} onChoose={chooseLocation} />}
       {loadError && <div className="connection-note" role="status">{copy.loadError}</div>}
       <AnimatePresence>{selected && !dialogOpen && <LightDetails key={selected.id} light={selected} locale={locale} copy={copy} onClose={clearSelection} />}</AnimatePresence>
       {dialogOpen && (

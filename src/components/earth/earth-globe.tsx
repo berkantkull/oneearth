@@ -28,6 +28,7 @@ export function EarthGlobe({ selecting, onLocationPick }: Props) {
     night.colorSpace = THREE.SRGBColorSpace;
     stars.colorSpace = THREE.SRGBColorSpace;
     clouds.wrapS = THREE.RepeatWrapping;
+    clouds.needsUpdate = true;
     for (const texture of [day, night, clouds, normal, specular, stars]) texture.anisotropy = 8;
   }, [day, night, clouds, normal, specular, stars]);
 

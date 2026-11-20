@@ -33,10 +33,11 @@ export const earthFragment = /* glsl */ `
     float sunDot = dot(normal, lightDirection);
     float diffuse = max(dot(surfaceNormal, lightDirection), 0.0);
     float dayAmount = smoothstep(-0.12, 0.18, sunDot);
+    vec2 cloudUv = vec2(fract(vUv.x + cloudOffset), clamp(vUv.y, 0.0, 1.0));
     vec3 day = texture2D(dayMap, vUv).rgb;
     vec3 night = texture2D(nightMap, vUv).rgb;
     float ocean = texture2D(specularMap, vUv).r;
-    float cloudShadow = texture2D(cloudMap, vec2(vUv.x + cloudOffset, vUv.y)).r;
+    float cloudShadow = texture2D(cloudMap, cloudUv).r;
     vec3 color = day * (0.035 + diffuse * 1.12) * (1.0 - cloudShadow * 0.3);
     vec3 halfway = normalize(lightDirection + viewDirection);
     float highlight = pow(max(dot(normal, halfway), 0.0), 64.0) * ocean * dayAmount;
@@ -61,7 +62,8 @@ export const cloudFragment = /* glsl */ `
   varying vec3 vNormal;
   void main() {
     vec3 normal = normalize(vNormal);
-    float cloud = texture2D(cloudMap, vec2(vUv.x + cloudOffset, vUv.y)).r;
+    vec2 cloudUv = vec2(fract(vUv.x + cloudOffset), clamp(vUv.y, 0.0, 1.0));
+    float cloud = texture2D(cloudMap, cloudUv).r;
     cloud = smoothstep(0.1, 0.88, cloud);
     float light = smoothstep(-0.15, 0.35, dot(normal, normalize(sunDirection)));
     gl_FragColor = vec4(vec3(0.92, 0.95, 1.0) * (0.05 + light * 0.95), cloud * 0.74 * (0.2 + light * 0.8));

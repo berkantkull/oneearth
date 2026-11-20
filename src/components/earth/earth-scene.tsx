@@ -38,6 +38,19 @@ function CameraFocus({ selected }: { selected: Light | null }) {
   return null;
 }
 
+function StoryCaptureBridge() {
+  const { gl, scene, camera } = useThree();
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const capture = () => gl.render(scene, camera);
+    canvas.addEventListener("oneearth:capture", capture);
+    return () => canvas.removeEventListener("oneearth:capture", capture);
+  }, [camera, gl, scene]);
+
+  return null;
+}
+
 export default function EarthScene(props: Props) {
   const controls = useRef<OrbitControlsImpl>(null);
 
@@ -58,6 +71,7 @@ export default function EarthScene(props: Props) {
         <LightMarkers lights={props.lights} selectedId={props.selected?.id ?? null} onSelect={props.onSelect} />
       </Suspense>
       <CameraFocus selected={props.selected} />
+      <StoryCaptureBridge />
       <OrbitControls
         ref={controls}
         enablePan={false}

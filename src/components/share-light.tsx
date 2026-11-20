@@ -40,10 +40,13 @@ export function ShareLight({ light, locale, copy }: { light: Light; locale: Loca
   async function handleStoryShare() {
     setStoryState("preparing");
     try {
-      const blob = await createStoryImage(light, locale, getUrl());
+      const earthCanvas = document.querySelector<HTMLCanvasElement>(".scene-wrap canvas");
+      if (!earthCanvas) throw new Error("EARTH_CANVAS_NOT_FOUND");
+      earthCanvas.dispatchEvent(new Event("oneearth:capture"));
+      const blob = await createStoryImage(light, locale, getUrl(), earthCanvas);
       const file = new File([blob], `one-earth-${light.id.slice(0, 8)}.png`, { type: "image/png" });
-      const isTouchDevice = navigator.maxTouchPoints > 0;
-      if (isTouchDevice && navigator.share && navigator.canShare?.({ files: [file] })) {
+      const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobileDevice && navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           files: [file],
           title: `“${light.word}” · ONE EARTH`,

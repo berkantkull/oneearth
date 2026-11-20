@@ -19,7 +19,7 @@ ONE EARTH, insanların Dünya üzerinde yaklaşık bir konum seçip tek bir keli
 - GPS izni istemeden, Dünya üzerinden yaklaşık konum seçimi
 - 1–24 Unicode karakterden oluşan tek kelime doğrulaması
 - Supabase için güvenli API katmanı, veritabanı migration dosyası ve Upstash oran sınırlaması
-- Işık ayrıntıları, doğrudan yıldızı açan paylaşım bağlantıları ve 1080×1920 story görselleri
+- Işık ayrıntıları, doğrudan yıldızı açan paylaşım bağlantıları ve Dünya’nın o anki gerçek WebGL karesinden üretilen 1080×1920 story görselleri
 - Koordinat, doğrulama ve API sınırları için otomatik testler
 
 ## Gerçek veri ve GitHub Pages sürümü

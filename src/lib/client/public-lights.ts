@@ -40,6 +40,27 @@ export async function listPublicLights(limit = 200) {
   return { lights: ((data ?? []) as DbLight[]).map(toLight), count: count ?? 0 };
 }
 
+export async function listPublicWords(maximum = 10_000) {
+  const pageSize = 1_000;
+  const words: string[] = [];
+
+  for (let offset = 0; offset < maximum; offset += pageSize) {
+    const end = Math.min(offset + pageSize, maximum) - 1;
+    const { data, error } = await getClient()
+      .from("lights")
+      .select("word")
+      .eq("status", "visible")
+      .order("created_at", { ascending: true })
+      .range(offset, end);
+    if (error) throw error;
+    const page = (data ?? []) as Array<{ word: string }>;
+    words.push(...page.map((row) => row.word));
+    if (page.length < end - offset + 1) break;
+  }
+
+  return words;
+}
+
 export async function getPublicLight(id: string) {
   const { data, error } = await getClient()
     .from("lights")

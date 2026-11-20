@@ -5,13 +5,15 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence } from "motion/react";
 import type { Light, LightsPage } from "@/types/light";
 import { messages, type Locale } from "@/lib/i18n";
+import { buildHumanityPulse } from "@/lib/humanity-pulse";
 import { ErrorBoundary } from "./error-boundary";
 import { HeroOverlay } from "./hero-overlay";
 import { LeaveLightDialog } from "./leave-light-dialog";
 import { LightDetails } from "./light-details";
 import { LoadingScene } from "./loading-scene";
 import { LocationSearch } from "./location-search";
-import { getPublicLight, hasPublicLightsBackend, listPublicLights } from "@/lib/client/public-lights";
+import { PulseOfHumanity } from "./pulse-of-humanity";
+import { getPublicLight, hasPublicLightsBackend, listPublicLights, listPublicWords } from "@/lib/client/public-lights";
 
 const EarthScene = dynamic(() => import("./earth/earth-scene"), { ssr: false, loading: LoadingScene });
 const staticMode = process.env.NEXT_PUBLIC_STATIC_MODE === "1";
@@ -36,6 +38,9 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
   const [webgl, setWebgl] = useState<boolean | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [pulseOpen, setPulseOpen] = useState(false);
+  const [pulseWords, setPulseWords] = useState<string[] | null>(null);
+  const [pulseStatus, setPulseStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -110,9 +115,10 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
   }
 
   const recentLights = useMemo(() => lights.slice(0, 12), [lights]);
+  const pulseEntries = useMemo(() => buildHumanityPulse(pulseWords ?? []), [pulseWords]);
 
   function selectLight(light: Light) {
-    setSelected(light); setSelecting(false);
+    setSelected(light); setSelecting(false); setPulseOpen(false);
     const path = staticMode ? `${basePath}/?light=${light.id}` : `/light/${light.id}`;
     window.history.replaceState({}, "", path);
   }
@@ -123,7 +129,7 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
   }
 
   function beginLeaving() {
-    setSelected(null); setCoordinates(null); setSelecting(true);
+    setSelected(null); setCoordinates(null); setSelecting(true); setPulseOpen(false);
   }
 
   function chooseLocation(latitude: number, longitude: number) {
@@ -132,8 +138,22 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
 
   function handleCreated(light: Light) {
     setLights((current) => [light, ...current.filter((item) => item.id !== light.id)]);
+    setPulseWords((current) => current ? [...current, light.word] : current);
     setCount((current) => current + 1);
     selectLight(light);
+  }
+
+  async function openPulse() {
+    setPulseOpen(true);
+    if (pulseWords) return;
+    setPulseStatus("loading");
+    try {
+      const words = persistence === "supabase" ? await listPublicWords() : lights.map((light) => light.word);
+      setPulseWords(words);
+      setPulseStatus("ready");
+    } catch {
+      setPulseStatus("error");
+    }
   }
 
   const fallback = (
@@ -160,6 +180,9 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
 
       <HeroOverlay count={count} selecting={selecting} locale={locale} copy={copy} onLocaleChange={changeLocale} onLeave={beginLeaving} onCancel={() => setSelecting(false)} />
       {!selected && !dialogOpen && <LocationSearch locale={locale} copy={copy} onChoose={chooseLocation} />}
+      {!selected && !dialogOpen && !selecting && (
+        <PulseOfHumanity open={pulseOpen} entries={pulseEntries} status={pulseStatus} locale={locale} copy={copy} onOpen={openPulse} onClose={() => setPulseOpen(false)} />
+      )}
       {loadError && <div className="connection-note" role="status">{copy.loadError}</div>}
       <AnimatePresence>{selected && !dialogOpen && <LightDetails key={selected.id} light={selected} locale={locale} copy={copy} onClose={clearSelection} />}</AnimatePresence>
       {dialogOpen && (

@@ -35,6 +35,24 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid 
 .location-results > p { margin: 0; padding: 15px 13px; color: #9ba2a6; font-size: .875rem; }
 .location-search-note { display: block; padding: 9px 12px; color: #697177; font-size: .7rem; letter-spacing: .02em; }
 
+.pulse-dock { position: absolute; z-index: 5; top: 76px; right: clamp(24px, 4vw, 60px); width: min(310px, calc(100vw - 48px)); }
+.pulse-trigger { display: flex; align-items: center; gap: 9px; margin-left: auto; min-height: 43px; padding: 0 13px; border: 1px solid rgba(242,241,236,.2); border-radius: 2px; background: rgba(2,4,7,.78); color: #b8bdc0; font-family: "Space Grotesk Variable", sans-serif; font-size: .7rem; font-weight: 550; letter-spacing: .06em; backdrop-filter: blur(12px); cursor: pointer; }
+.pulse-trigger:hover, .pulse-trigger.active { border-color: rgba(233,189,114,.58); color: var(--paper); }
+.pulse-signal { display: grid; place-items: center; color: var(--warm); filter: drop-shadow(0 0 6px rgba(233,189,114,.45)); }
+.pulse-panel { position: absolute; top: 50px; right: 0; width: 100%; padding: 22px; }
+.pulse-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.pulse-panel-head .eyebrow { margin-bottom: 7px; font-size: .58rem; }
+.pulse-panel h2 { margin: 0; font-family: "Space Grotesk Variable", sans-serif; font-size: 1.12rem; font-weight: 520; letter-spacing: -.015em; }
+.pulse-intro { margin: 14px 0 17px; color: #8f979c; font-size: .75rem; line-height: 1.55; }
+.pulse-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.pulse-list li { display: grid; grid-template-columns: 25px minmax(0,1fr) auto; align-items: center; gap: 9px; min-height: 39px; border-bottom: 1px solid rgba(242,241,236,.1); }
+.pulse-list strong { overflow: hidden; color: #e0dfd9; font-family: "Space Grotesk Variable", sans-serif; font-size: .88rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.pulse-list li > span:last-child { color: #858d92; font-size: .65rem; }
+.pulse-rank { color: #555d62; font-size: .58rem; font-variant-numeric: tabular-nums; }
+.pulse-state { display: flex; align-items: center; gap: 10px; min-height: 70px; padding: 16px 0; border-top: 1px solid var(--line); color: #858d92; font-size: .73rem; line-height: 1.5; }
+.pulse-error { color: #c99891; }
+.pulse-loader { width: 14px; height: 14px; border: 1px solid rgba(233,189,114,.25); border-top-color: var(--warm); border-radius: 50%; animation: spin 1s linear infinite; }
+
 .hero-overlay { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .hero-overlay button, .hero-overlay a { pointer-events: auto; }
 .topbar { position: absolute; inset: 0 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 30px clamp(24px, 4vw, 60px); background: linear-gradient(180deg, rgba(2,4,7,.72), rgba(2,4,7,0)); }
@@ -114,6 +132,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid 
 
 @media (max-width: 760px) {
   .location-search { top: 57px; left: 20px; width: min(225px, calc(100vw - 40px)); }
+  .pulse-dock { top: 108px; right: 20px; width: min(310px, calc(100vw - 40px)); }
+  .pulse-trigger { min-height: 39px; font-size: .64rem; }
   .earth-experience { min-height: 560px; }
   .topbar { padding: 20px; }
   .wordmark { font-size: .7rem; letter-spacing: .16em; }

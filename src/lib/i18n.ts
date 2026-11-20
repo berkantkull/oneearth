@@ -10,6 +10,8 @@ export type Copy = {
   placing: string; placeLight: string; submitError: string; fallbackEyebrow: string; fallbackTitle: string;
   fallbackCopy: string; loadError: string; loading: string; locationSearchLabel: string; locationSearchPlaceholder: string;
   locationSearchClear: string; locationSearchEmpty: string; locationSearchNote: string;
+  pulseTitle: string; pulseLive: string; pulseIntro: string; pulseClose: string; pulseLoading: string;
+  pulseEmpty: string; pulseError: string; pulseTimes: string;
 };
 
 export const messages: Record<Locale, Copy> = {
@@ -30,6 +32,10 @@ export const messages: Record<Locale, Copy> = {
     loadError: "Güncel ışıklara ulaşılamadı.", loading: "Dünya hazırlanıyor", locationSearchLabel: "Işık bırakmak için şehir ara",
     locationSearchPlaceholder: "Şehir veya il ara…", locationSearchClear: "Aramayı temizle", locationSearchEmpty: "Eşleşen bir konum bulunamadı.",
     locationSearchNote: "81 il ve dünya şehirleri",
+    pulseTitle: "Pulse of Humanity", pulseLive: "İnsanlığın canlı nabzı",
+    pulseIntro: "Dünya üzerinde birden fazla insanın seçtiği ortak kelimeler.", pulseClose: "Pulse of Humanity panelini kapat",
+    pulseLoading: "Ortak kelimeler dinleniyor…", pulseEmpty: "Henüz ortak bir kelime oluşmadı.",
+    pulseError: "İnsanlığın nabzına şu anda ulaşılamıyor.", pulseTimes: "kişi",
   },
   en: {
     home: "ONE EARTH home", lights: "lights", light: "light", demo: "Demo", tagline: "One planet. Millions of voices.",
@@ -49,5 +55,9 @@ export const messages: Record<Locale, Copy> = {
     loadError: "The latest lights could not be reached.", loading: "Preparing Earth", locationSearchLabel: "Search for a city to leave a light",
     locationSearchPlaceholder: "Search city or province…", locationSearchClear: "Clear search", locationSearchEmpty: "No matching place was found.",
     locationSearchNote: "81 Turkish provinces and world cities",
+    pulseTitle: "Pulse of Humanity", pulseLive: "The living pulse",
+    pulseIntro: "Words independently shared by more than one person across Earth.", pulseClose: "Close Pulse of Humanity panel",
+    pulseLoading: "Listening for shared words…", pulseEmpty: "No shared word has emerged yet.",
+    pulseError: "The pulse of humanity is temporarily unavailable.", pulseTimes: "people",
   },
 };

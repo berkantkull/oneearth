@@ -19,6 +19,40 @@ function drawCover(context: CanvasRenderingContext2D, source: CanvasImageSource,
   context.drawImage(source, x, y, width, height, 0, 0, 1080, 1920);
 }
 
+function drawBrandMark(context: CanvasRenderingContext2D, x: number, y: number) {
+  context.save();
+  context.strokeStyle = "rgba(242,241,236,.88)";
+  context.fillStyle = "#e9bd72";
+  context.lineCap = "round";
+
+  context.lineWidth = 4;
+  context.beginPath();
+  context.arc(x, y, 23, .78, Math.PI * 2 - .78);
+  context.stroke();
+
+  context.lineWidth = 3.5;
+  context.beginPath();
+  context.moveTo(x, y - 23); context.lineTo(x, y - 5);
+  context.moveTo(x, y + 5); context.lineTo(x, y + 23);
+  context.moveTo(x + 6, y - 14); context.lineTo(x + 18, y - 14);
+  context.moveTo(x + 6, y); context.lineTo(x + 22, y);
+  context.moveTo(x + 6, y + 14); context.lineTo(x + 18, y + 14);
+  context.stroke();
+
+  context.globalAlpha = .58;
+  context.lineWidth = 1.6;
+  context.beginPath();
+  context.moveTo(x - 19.5, y - 7.5); context.quadraticCurveTo(x - 10, y - 18, x, y - 18);
+  context.moveTo(x - 19.5, y + 7.5); context.quadraticCurveTo(x - 10, y + 18, x, y + 18);
+  context.stroke();
+  context.globalAlpha = 1;
+
+  context.beginPath();
+  context.arc(x, y, 4.6, 0, Math.PI * 2);
+  context.fill();
+  context.restore();
+}
+
 export async function createStoryImage(light: Light, locale: Locale, shareUrl: string, earthCanvas: HTMLCanvasElement) {
   if (!earthCanvas.width || !earthCanvas.height) throw new Error("EARTH_CANVAS_EMPTY");
 
@@ -71,17 +105,9 @@ export async function createStoryImage(light: Light, locale: Locale, shareUrl: s
   context.fillStyle = "#f2f1ec";
   context.font = "600 29px 'Space Grotesk Variable', sans-serif";
   context.letterSpacing = "8px";
-  context.fillText("ONE EARTH", 86, 112);
+  context.fillText("ONE EARTH", 94, 112);
   context.letterSpacing = "0px";
-  context.strokeStyle = "rgba(242,241,236,.22)";
-  context.lineWidth = 2;
-  context.beginPath();
-  context.arc(55, 102, 19, 0, Math.PI * 2);
-  context.stroke();
-  context.strokeStyle = "rgba(233,189,114,.85)";
-  context.beginPath();
-  context.ellipse(55, 102, 25, 8, -.42, 0, Math.PI * 2);
-  context.stroke();
+  drawBrandMark(context, 57, 102);
 
   context.textAlign = "center";
   const contentStart = sourceAspect > .85 ? 1105 : 1390;

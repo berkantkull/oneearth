@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import type { Copy, Locale } from "@/lib/i18n";
+import { BrandMark } from "./brand-mark";
 import { StatsCounter } from "./stats-counter";
 
 type Props = {
@@ -16,7 +17,7 @@ export function HeroOverlay({ count, selecting, locale, copy, onLocaleChange, on
     <div className="hero-overlay">
       <motion.header className="topbar" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
         <Link className="wordmark" href="/" aria-label={copy.home}>
-          <span className="planet-mark" aria-hidden="true"><i /></span>
+          <BrandMark className="brand-mark" />
           <span>ONE EARTH</span>
         </Link>
         <div className="topbar-tools">

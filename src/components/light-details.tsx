@@ -23,7 +23,7 @@ export function LightDetails({ light, locale, copy, onClose }: { light: Light; l
         <span>{formatCoordinates(light.latitude, light.longitude, locale)}</span>
         <span>{new Intl.DateTimeFormat(locale === "tr" ? "tr-TR" : "en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(light.createdAt))}</span>
       </div>
-      <ShareLight id={light.id} copy={copy} />
+      <ShareLight light={light} locale={locale} copy={copy} />
     </motion.aside>
   );
 }

@@ -40,6 +40,17 @@ export async function listPublicLights(limit = 200) {
   return { lights: ((data ?? []) as DbLight[]).map(toLight), count: count ?? 0 };
 }
 
+export async function getPublicLight(id: string) {
+  const { data, error } = await getClient()
+    .from("lights")
+    .select("id,word,latitude,longitude,created_at")
+    .eq("id", id)
+    .eq("status", "visible")
+    .maybeSingle();
+  if (error) throw error;
+  return data ? toLight(data as DbLight) : null;
+}
+
 export async function createPublicLight(input: CreateLightInput, clientId: string) {
   const { data, error } = await getClient()
     .rpc("create_public_light", {

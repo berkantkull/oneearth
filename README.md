@@ -19,7 +19,7 @@ ONE EARTH, insanların Dünya üzerinde yaklaşık bir konum seçip tek bir keli
 - GPS izni istemeden, Dünya üzerinden yaklaşık konum seçimi
 - 1–24 Unicode karakterden oluşan tek kelime doğrulaması
 - Supabase için güvenli API katmanı, veritabanı migration dosyası ve Upstash oran sınırlaması
-- Işık ayrıntıları, paylaşım bağlantıları, mobil görünüm ve WebGL yedeği
+- Işık ayrıntıları, doğrudan yıldızı açan paylaşım bağlantıları ve 1080×1920 story görselleri
 - Koordinat, doğrulama ve API sınırları için otomatik testler
 
 ## Gerçek veri ve GitHub Pages sürümü
@@ -68,7 +68,28 @@ Servis rolü anahtarı hiçbir zaman `NEXT_PUBLIC_` önekiyle tanımlanmamalıd�
 
 Publishable key tarayıcıda kullanılmak üzere tasarlanmıştır ve yetkisi RLS ile sınırlıdır. `SUPABASE_SERVICE_ROLE_KEY` veya yeni `sb_secret_...` anahtarları hiçbir zaman GitHub Pages derlemesine eklenmemelidir.
 
-Bir ışığı yayından kaldırmak için Supabase tablosundaki `status` alanını `hidden` yapın. Pages istemcisi ve genel API yalnızca `visible` kayıtları döndürür.
+## Mesajları görme ve moderasyon
+
+Bırakılan kelimeler Supabase Dashboard içinde **Table Editor → `public` şeması → `lights` tablosu** yolunda görünür. Buradaki alanlar:
+
+- `word`: kullanıcının bıraktığı kelime
+- `latitude` / `longitude`: yaklaşık konum
+- `created_at`: bırakılma zamanı
+- `status`: `visible` ise yayında, `hidden` ise gizli
+
+Uygunsuz bir ışığı kaldırmanın güvenli ve geri alınabilir yolu, ilgili satırdaki `status` değerini `hidden` yapıp kaydetmektir. Site ve genel API yalnızca `visible` kayıtları gösterir. Tekrar göstermek için değeri `visible` yapabilirsiniz.
+
+Kalıcı silme gerekiyorsa satırı seçip Table Editor araç çubuğundaki **Delete row** işlemini kullanın. Yönetici silme yetkisi özellikle herkese açık GitHub Pages arayüzüne eklenmemiştir; Supabase servis anahtarını tarayıcıya koymak bütün veritabanını tehlikeye atar.
+
+SQL Editor üzerinden aynı işlemler şu şekilde yapılabilir:
+
+```sql
+-- Önce yıldızı geri alınabilir biçimde gizleyin
+update public.lights set status = 'hidden' where id = 'YILDIZ_UUID';
+
+-- Yalnızca gerçekten kalıcı silmek isterseniz
+delete from public.lights where id = 'YILDIZ_UUID';
+```
 
 ## Kontroller
 

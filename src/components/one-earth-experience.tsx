@@ -11,7 +11,7 @@ import { LeaveLightDialog } from "./leave-light-dialog";
 import { LightDetails } from "./light-details";
 import { LoadingScene } from "./loading-scene";
 import { LocationSearch } from "./location-search";
-import { hasPublicLightsBackend, listPublicLights } from "@/lib/client/public-lights";
+import { getPublicLight, hasPublicLightsBackend, listPublicLights } from "@/lib/client/public-lights";
 
 const EarthScene = dynamic(() => import("./earth/earth-scene"), { ssr: false, loading: LoadingScene });
 const staticMode = process.env.NEXT_PUBLIC_STATIC_MODE === "1";
@@ -63,9 +63,18 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
     if (persistence === "session") return;
     if (persistence === "supabase") {
       let active = true;
-      listPublicLights().then((result) => {
+      listPublicLights().then(async (result) => {
         if (!active) return;
-        setLights(result.lights); setCount(result.count); setLoadError(false);
+        const requestedId = new URLSearchParams(window.location.search).get("light");
+        const requested = requestedId
+          ? result.lights.find((light) => light.id === requestedId) ?? await getPublicLight(requestedId)
+          : null;
+        if (!active) return;
+        setLights(requested && !result.lights.some((light) => light.id === requested.id)
+          ? [requested, ...result.lights]
+          : result.lights);
+        if (requested) setSelected(requested);
+        setCount(result.count); setLoadError(false);
       }).catch(() => { if (active) setLoadError(true); });
       return () => { active = false; };
     }

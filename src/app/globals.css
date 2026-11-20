@@ -21,7 +21,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid 
 .scene-wrap { position: absolute; inset: 0; z-index: 1; }
 .scene-wrap canvas { touch-action: none; }
 .is-selecting .scene-wrap canvas { cursor: crosshair; }
-.location-search { position: absolute; z-index: 4; top: 91px; left: 50%; width: min(360px, calc(100vw - 48px)); transform: translateX(-50%); }
+.location-search { position: absolute; z-index: 4; top: 76px; left: clamp(24px, 4vw, 60px); width: min(340px, calc(100vw - 48px)); }
 .location-search-field { display: flex; align-items: center; gap: 10px; height: 43px; padding: 0 12px; border: 1px solid rgba(242,241,236,.2); border-radius: 2px; background: rgba(2,4,7,.78); color: #969da2; box-shadow: 0 12px 34px rgba(0,0,0,.2); backdrop-filter: blur(12px); }
 .location-search-field:focus-within { border-color: rgba(233,189,114,.68); }
 .location-search-field input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--paper); font-size: .875rem; }
@@ -112,7 +112,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid 
 .webgl-fallback li button { width: 100%; padding: 11px 0; border: 0; background: none; text-align: left; cursor: pointer; }
 
 @media (max-width: 760px) {
-  .location-search { top: 67px; width: calc(100vw - 40px); }
+  .location-search { top: 57px; left: 20px; width: calc(100vw - 40px); }
   .earth-experience { min-height: 560px; }
   .topbar { padding: 20px; }
   .wordmark { font-size: .7rem; letter-spacing: .16em; }

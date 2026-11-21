@@ -12,6 +12,7 @@ export type Copy = {
   locationSearchClear: string; locationSearchEmpty: string; locationSearchNote: string;
   pulseTitle: string; pulseLive: string; pulseIntro: string; pulseClose: string; pulseLoading: string;
   pulseEmpty: string; pulseError: string; pulseTimes: string;
+  locationCluster: string; locationClusterList: string;
 };
 
 export const messages: Record<Locale, Copy> = {
@@ -36,6 +37,7 @@ export const messages: Record<Locale, Copy> = {
     pulseIntro: "Dünya üzerinde birden fazla insanın seçtiği ortak kelimeler.", pulseClose: "Pulse of Humanity panelini kapat",
     pulseLoading: "Ortak kelimeler dinleniyor…", pulseEmpty: "Henüz ortak bir kelime oluşmadı.",
     pulseError: "İnsanlığın nabzına şu anda ulaşılamıyor.", pulseTimes: "kişi",
+    locationCluster: "Bu konumda {count} ışık", locationClusterList: "Bu konumdaki ışıklar",
   },
   en: {
     home: "ONE EARTH home", lights: "lights", light: "light", demo: "Demo", tagline: "One planet. Millions of voices.",
@@ -59,5 +61,6 @@ export const messages: Record<Locale, Copy> = {
     pulseIntro: "Words independently shared by more than one person across Earth.", pulseClose: "Close Pulse of Humanity panel",
     pulseLoading: "Listening for shared words…", pulseEmpty: "No shared word has emerged yet.",
     pulseError: "The pulse of humanity is temporarily unavailable.", pulseTimes: "people",
+    locationCluster: "{count} lights at this place", locationClusterList: "Lights at this place",
   },
 };

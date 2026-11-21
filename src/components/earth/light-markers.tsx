@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
-import { layoutLightMarkers } from "@/lib/marker-layout";
+import { clusterLightMarkers } from "@/lib/marker-layout";
 import type { Light } from "@/types/light";
 
 type Props = { lights: Light[]; selectedId: string | null; onSelect: (light: Light) => void };
@@ -11,7 +11,7 @@ type Props = { lights: Light[]; selectedId: string | null; onSelect: (light: Lig
 export function LightMarkers({ lights, selectedId, onSelect }: Props) {
   const mesh = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
-  const layouts = useMemo(() => layoutLightMarkers(lights), [lights]);
+  const clusters = useMemo(() => clusterLightMarkers(lights), [lights]);
   const material = useMemo(() => new THREE.ShaderMaterial({
     vertexShader: /* glsl */ `
       varying vec2 vUv;
@@ -58,10 +58,11 @@ export function LightMarkers({ lights, selectedId, onSelect }: Props) {
   useFrame(({ clock, camera }) => {
     if (!mesh.current) return;
     const time = clock.getElapsedTime();
-    layouts.forEach(({ position, clusterSize }, index) => {
-      const selected = lights[index]?.id === selectedId;
+    clusters.forEach(({ position, lights: clusterLights }, index) => {
+      const selected = clusterLights.some((light) => light.id === selectedId);
       const pulse = 1 + Math.sin(time * 1.65 + index * 0.73) * 0.08;
-      const scale = (selected ? 0.23 : clusterSize > 1 ? 0.112 : 0.145) * pulse;
+      const clusteredScale = 0.145 + Math.min(Math.log2(clusterLights.length) * 0.022, 0.065);
+      const scale = (selected ? 0.23 : clusteredScale) * pulse;
       dummy.position.set(position.x, position.y, position.z);
       dummy.quaternion.copy(camera.quaternion);
       dummy.scale.set(scale, scale, 1);
@@ -74,12 +75,12 @@ export function LightMarkers({ lights, selectedId, onSelect }: Props) {
   function handleClick(event: ThreeEvent<MouseEvent>) {
     event.stopPropagation();
     if (event.instanceId === undefined) return;
-    const light = lights[event.instanceId];
+    const light = clusters[event.instanceId]?.lights[0];
     if (light) onSelect(light);
   }
 
   return (
-    <instancedMesh ref={mesh} args={[undefined, undefined, lights.length]} material={material} onClick={handleClick} frustumCulled={false}>
+    <instancedMesh ref={mesh} args={[undefined, undefined, clusters.length]} material={material} onClick={handleClick} frustumCulled={false}>
       <planeGeometry args={[1, 1]} />
     </instancedMesh>
   );

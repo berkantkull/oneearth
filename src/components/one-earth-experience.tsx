@@ -6,6 +6,7 @@ import { AnimatePresence } from "motion/react";
 import type { Light, LightsPage } from "@/types/light";
 import { messages, type Locale } from "@/lib/i18n";
 import { buildHumanityPulse } from "@/lib/humanity-pulse";
+import { lightLocationKey } from "@/lib/marker-layout";
 import { ErrorBoundary } from "./error-boundary";
 import { HeroOverlay } from "./hero-overlay";
 import { LeaveLightDialog } from "./leave-light-dialog";
@@ -116,6 +117,13 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
 
   const recentLights = useMemo(() => lights.slice(0, 12), [lights]);
   const pulseEntries = useMemo(() => buildHumanityPulse(pulseWords ?? []), [pulseWords]);
+  const relatedLights = useMemo(() => {
+    if (!selected) return [];
+    const key = lightLocationKey(selected);
+    return lights
+      .filter((light) => lightLocationKey(light) === key)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id));
+  }, [lights, selected]);
 
   function selectLight(light: Light) {
     setSelected(light); setSelecting(false); setPulseOpen(false);
@@ -184,7 +192,7 @@ export function OneEarthExperience({ initialLight = null }: { initialLight?: Lig
         <PulseOfHumanity open={pulseOpen} entries={pulseEntries} status={pulseStatus} locale={locale} copy={copy} onOpen={openPulse} onClose={() => setPulseOpen(false)} />
       )}
       {loadError && <div className="connection-note" role="status">{copy.loadError}</div>}
-      <AnimatePresence>{selected && !dialogOpen && <LightDetails key={selected.id} light={selected} locale={locale} copy={copy} onClose={clearSelection} />}</AnimatePresence>
+      <AnimatePresence>{selected && !dialogOpen && <LightDetails key={lightLocationKey(selected)} light={selected} relatedLights={relatedLights} locale={locale} copy={copy} onClose={clearSelection} onSelect={selectLight} />}</AnimatePresence>
       {dialogOpen && (
         <LeaveLightDialog coordinates={coordinates} persistence={persistence} locale={locale} copy={copy} onClose={() => { setDialogOpen(false); setCoordinates(null); }} onChangeLocation={() => { setDialogOpen(false); setCoordinates(null); setSelecting(true); }} onCreated={handleCreated} />
       )}
